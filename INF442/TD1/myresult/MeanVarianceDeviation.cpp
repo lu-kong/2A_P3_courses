@@ -4,10 +4,10 @@
 
 double CalculateMean(double values[], int length) {
   double sum = 0;
-  // Complete the function
-  for(int i=0; i<length; i++) {
+  for(int i=0; i<length;i++){
     sum += values[i];
   }
+  // Complete the function
   return (sum / length);
 }
 
@@ -15,8 +15,8 @@ double CalculateVariance(double values[], int length) {
   double mean = CalculateMean(values, length);
   // Complete the function
   double temp = 0;
-  for(int i=0; i<length; i++) {
-    temp += (values[i]-mean)*(values[i] - mean);
+  for(int i=0;i<length;i++){
+    temp += (values[i]-mean)*(values[i]-mean);
   }
   return temp / length;
 }
@@ -24,24 +24,20 @@ double CalculateVariance(double values[], int length) {
 double CalculateSampleVariance(double values[], int length) {
   double mean = CalculateMean(values, length);
   // Complete the function
-    double temp = 0;
-  for(int i=0; i<length; i++) {
-    temp += (values[i]-mean)*(values[i] - mean);
+  double temp = 0;
+  for(int i=0;i<length;i++){
+    temp += (values[i]-mean)*(values[i]-mean);
   }
   return temp / (length - 1);
 }
 
 double GetStandardDeviation(double values[], int length) {
-  double variance = CalculateVariance(values, length);
-  return sqrt(variance);// Complete the function;
+  return sqrt(CalculateVariance(values,length));// Complete the function;
 }
 
 double GetSampleStandardDeviation(double values[], int length) {
-  return sqrt(double CalculateSampleVariance(values,length);
-  // Complete the function;
+  return sqrt(CalculateSampleVariance(values,length));// Complete the function;
 }
-
-
 
 int main() {
   double sample[] = {
@@ -53,11 +49,11 @@ int main() {
   };
   int sample_length = sizeof(sample) / sizeof(sample[0]); // usual trick
 
-  double mean =  CalculateVariance// Complete the function
-  double variance = // Complete the function
-  double samplevariance =  // Complete the function
-  double sampledevi =  // Complete the function
-  double devi =  // Complete the function
+  double mean =  CalculateMean(sample,sample_length);// Complete the function
+  double variance = CalculateVariance(sample,sample_length);// Complete the function
+  double samplevariance =  CalculateSampleVariance(sample,sample_length);// Complete the function
+  double sampledevi =  GetSampleStandardDeviation(sample,sample_length);// Complete the function
+  double devi =  GetStandardDeviation(sample,sample_length);// Complete the function
 
   std::cout << "Total Numbers\t\t\t: " << sample_length << "\n"
             << "Mean\t\t\t\t: " << mean << "\n"
