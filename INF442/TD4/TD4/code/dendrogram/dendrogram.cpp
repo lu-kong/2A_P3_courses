@@ -115,10 +115,41 @@ double dendrogram::get_dendro_height()
 
 void dendrogram::set_clusters(int i, double h)
 {
+
+    // int cluster_label = p.label;
+    /*
+    Attention: 
+        1. Of the same generation, left kids are always older than righter kids;
+        2. In a single tree, hight of each descends is always smaller than that 
+    of the node principle; i.e. They were added to the node before the node is himself
+    added to another cluster;
+        3.We need to connect in each single tree the left-most kid and all its sub-tree
+    <FIRST>.
+        4.So, in iteration of each kids, it recursively call <set_cluster> for the left sibling first,
+    and than himself and his descends;
+        5.For each node we perform <set_cluster> in this order :
+            1. Left if it existe && not the first node;
+            2. himself if it is to be connected, that is, self.height<=h;
+            3. Down if it existe.
+    */
+    // TODO: Exercise 3.1
     assert(0 <= i && i < c->get_n());
     point &p = c->get_point(i);
-
-    // TODO: Exercise 3.1
+    // left
+    if(parent[i] != -1&& left[i] != -1) set_clusters(left[i],h);
+    // Self
+    if(parent[i] == -1||height[i]>h) p.label = i;
+    else{
+        p.label = c->get_point(parent[i]).label;
+        int pos_clst = parent[i];
+        while(clusters[pos_clst]!=-1){
+            pos_clst = clusters[pos_clst];
+        }
+        clusters[pos_clst] = i;
+    }
+    // Down
+    if(down[i]!=-1) set_clusters(down[i],h);
+    
 }
 
 void dendrogram::set_clusters(double h)
@@ -131,9 +162,35 @@ void dendrogram::set_clusters(double h)
 
 int dendrogram::count_clusters(int i) {
     int count = 0;
-    
-    // TODO: Exercise 3.2
+    /*
+    What we have is: 
+        - a clusters list
+        - labels of points
+    Attention: 
+        - Once a node is the same cluster as its parents, than all his descends also;
+        - if the self.label is the same as that of the left, then same cluster
+        - Thus we count only the left most kid of one node
 
+    We perform count_clusters in this order:
+        - Left if it existe
+        - Self
+        - Down if it existe and it is of different label than his parent
+    */
+   if(parent[i]==-1) count+=count_clusters(down[i]);
+   else{
+        // Left 
+       if (left[i] != -1){
+           count += count_clusters(left[i]);
+           if (c->get_point(i).label != c->get_point(parent[i]).label && down[i]!=-1) count+=count_clusters(down[i]); 
+       }
+       else{
+           if (c->get_point(i).label == c->get_point(parent[i]).label) return 1;
+           else if (down[i]!=-1)
+               count += count_clusters(down[i]);
+           //    return (c->get_point(i).label == c->get_point(parent[i]).label) ? count++ : count += count_clusters(down[i]);
+       }
+    }
+    // TODO: Exercise 3.2
     return count;
 }
 
@@ -159,8 +216,28 @@ double dendrogram::get_cluster_height(int cluster)
     assert(0 <= cluster && cluster < c->get_n());
 
     // TODO: Exercise 3.3
-
-    return 0; // Singleton cluster at a node
+    
+    if(c->get_point(cluster).label!=cluster) return 0;//not a representative
+    if(clusters[cluster] == -1) return 0;
+    double h = 0;
+    int lab = clusters[cluster];
+    while(lab>-1){
+        h = max(h,height[lab]);
+        lab = clusters[lab];
+    }
+    if (height[lab] > h)
+        h = height[lab];
+    return h;
+        // for (int lab = c->get_point(cluster).label; lab > -1; lab = clusters[lab])
+        // {
+        //     if (height[lab] > h)
+        //         h = height[lab];
+        // }
+        // if (height[lab] > h)
+        //     h = height[lab];
+        // return h;
+    
+        // return 0; // Singleton cluster at a node
 }
 
 /******** Significant heights ********/
